@@ -1,5 +1,4 @@
-import tkinter
-from KeyPad import KeyPad 
+import tkinter as tk
 
 calculation = ""
 
@@ -12,12 +11,8 @@ def evaluateCalculation():
 def clear():
     pass
 
-root = tkinter.Tk()
+root = tk.Tk()
 root.geometry("325x550")
 root.title("Calculator")
 root.resizable(False, False)
-root.configure(background="#202020") #dark grey background
-
-keypad = KeyPad(root)
-keypad.pack(fill="both", side="bottom", pady=(15, 0))
 root.mainloop()
