@@ -16,8 +16,8 @@ root = tkinter.Tk()
 root.geometry("325x550")
 root.title("Calculator")
 root.resizable(False, False)
-root.configure(background="#202020") #dark grey background
+root.configure(background = "#202020") #dark grey background
 
 keypad = KeyPad(root)
-keypad.pack(fill="both", side="bottom", pady=(15, 0))
+keypad.pack(fill = "both", side = "bottom", pady = (15, 0))
 root.mainloop()
