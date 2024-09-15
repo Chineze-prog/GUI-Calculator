@@ -9,10 +9,11 @@ root.title("Calculator")
 root.resizable(False, False)
 root.configure(background = "#202020") #dark grey background
 
-keypad = KeyPad(root)
-keypad.pack(fill = "both", side = "bottom", pady = (15, 0))
 
 calculationScreen = CalculatorScreen(root)
+keypad = KeyPad(root, calculationScreen)
+
+keypad.pack(fill = "both", side = "bottom", pady = (15, 0))
 calculationScreen.pack(fill = "x", side = "bottom")
 
 root.mainloop()

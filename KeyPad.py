@@ -1,11 +1,12 @@
 import tkinter as tk
-from calculator import calculationScreen
+
 class KeyPad(tk.Canvas):
-    def __init__(self, root):
+    def __init__(self, root, calculationScreen):
         super().__init__(master = root, background = root.cget("background"), highlightthickness = 0, height = 380)  
+        self.calculationScreen = calculationScreen
         
         upper_operators = ("AC", "+/-", "%")
-        side_operators = ("÷", "×", "-", "+", "=")
+        self.side_operators = ("÷", "×", "-", "+", "=")
         text = (7, 8, 9, 4, 5, 6, 1, 2, 3, 0, "", ".")
         
         for row in range(5):
@@ -18,7 +19,7 @@ class KeyPad(tk.Canvas):
                     button_text = upper_operators[column]
                 elif column == 3:
                     button_background = "#FFC000"
-                    button_text = side_operators[row]
+                    button_text = self.side_operators[row]
                 else:
                     button_background = "#505050"
                     button_text = text[(row - 1) * 3 + column]
@@ -66,15 +67,21 @@ class KeyPad(tk.Canvas):
         # if ac the clear all, if c then go back one step
         if text == "AC": 
             #calculationScreen.configure(text = 0, font = ("Arial", 40))
-            calculationScreen.clear()
+            self.calculationScreen.clearAll()
         elif text == "+/-": 
             #calculationScreen["text"] = -int(calculationScreen.cget("text"))
-            calculationScreen.reverseSign()
+            self.calculationScreen.reverseSign()
         elif text == "=":
-            calculationScreen.equate()
+            self.calculationScreen.equate()
         else:
-            calculationScreen.addToEquation(str(text))
+            if self.calculationScreen.getHasEquated():
+                self.calculationScreen.resetHasEquated()
+                
+                if text not in self.side_operators and text != "%":
+                    self.calculationScreen.clearAll()
+                    
+            self.calculationScreen.addToEquation(str(text))
             
-    if calculationScreen.winfo_reqwidth() > 325:
-        #calculationScreen["font"] = ("Arial", int(calculationScreen.cget("font")[-2:]) - 3)
-        calculationScreen.reduceFont()
+        if self.calculationScreen.winfo_reqwidth() > 325:
+            #calculationScreen["font"] = ("Arial", int(calculationScreen.cget("font")[-2:]) - 3)
+            self.calculationScreen.reduceFont()
