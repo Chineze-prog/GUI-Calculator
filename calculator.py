@@ -2,16 +2,6 @@ import tkinter as tk
 from KeyPad import KeyPad
 from CalculationScreen import CalculatorScreen 
 
-calculation = ""
-
-def addToCalculation(symbol):
-    pass
-
-def evaluateCalculation():
-    pass
-
-def clear():
-    pass
 
 root = tk.Tk()
 root.geometry("325x550")

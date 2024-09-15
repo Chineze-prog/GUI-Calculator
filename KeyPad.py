@@ -1,4 +1,5 @@
 import tkinter as tk
+from calculator import calculationScreen
 class KeyPad(tk.Canvas):
     def __init__(self, root):
         super().__init__(master = root, background = root.cget("background"), highlightthickness = 0, height = 380)  
@@ -42,6 +43,10 @@ class KeyPad(tk.Canvas):
                 self.hoverColorChange(item = button, button = button, color = button_background)
                 self.hoverColorChange(item = keyboard_text, button = button, color = button_background)
                 
+                button_text = 0 if button_text == "" else button_text
+                self.tag_bind(button, "<Button-1>", lambda event, text = button_text: self.keyPressed(text))
+                self.tag_bind(keyboard_text, "<Button-1>", lambda event, text = button_text: self.keyPressed(text))
+                
                           
     def hoverColorChange(self, item, button, color):
         if color == "#D3D3D3":
@@ -58,4 +63,18 @@ class KeyPad(tk.Canvas):
         
         
     def keyPressed(self, text):
-        pass
+        # if ac the clear all, if c then go back one step
+        if text == "AC": 
+            #calculationScreen.configure(text = 0, font = ("Arial", 40))
+            calculationScreen.clear()
+        elif text == "+/-": 
+            #calculationScreen["text"] = -int(calculationScreen.cget("text"))
+            calculationScreen.reverseSign()
+        elif text == "=":
+            calculationScreen.equate()
+        else:
+            calculationScreen.addToEquation(str(text))
+            
+    if calculationScreen.winfo_reqwidth() > 325:
+        #calculationScreen["font"] = ("Arial", int(calculationScreen.cget("font")[-2:]) - 3)
+        calculationScreen.reduceFont()
