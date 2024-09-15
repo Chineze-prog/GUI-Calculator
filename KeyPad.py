@@ -1,5 +1,5 @@
-import tkinter
-class KeyPad(tkinter.Canvas):
+import tkinter as tk
+class KeyPad(tk.Canvas):
     def __init__(self, root):
         super().__init__(master = root, background = root.cget("background"), highlightthickness = 0, height = 380)  
         
