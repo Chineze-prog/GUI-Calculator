@@ -71,7 +71,10 @@ class CalculatorScreen(tk.Message):
     
     # reverse the sign of the current number
     def reverseSign(self):
-        self["text"] = -float(self.cget("text"))
+        try:
+            self["text"] = -int(self.cget("text"))
+        except:
+            self["text"] = -float(self.cget("text"))
     
     
     # reduce the fontsize if the content exceeds the screen width
