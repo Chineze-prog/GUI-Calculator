@@ -4,6 +4,8 @@ class KeyPad(tk.Canvas):
     def __init__(self, root, calculationScreen):
         super().__init__(master = root, background = root.cget("background"), highlightthickness = 0, height = 380)  
         self.calculationScreen = calculationScreen
+        self.numberPressed = False
+        self.buttons = {}
         
         upper_operators = ("AC", "+/-", "%")
         self.side_operators = ("÷", "×", "-", "+", "=")
@@ -25,18 +27,18 @@ class KeyPad(tk.Canvas):
                     button_text = text[(row - 1) * 3 + column]
                 
                 
-                if not button_text in (0, ""):
-                    button = self.create_oval(x, y, x + 60, y + 60, fill = button_background, width = 0)
-                elif button_text == 0:
-                    arc1 = self.create_arc(x, y, x + 60, y + 60, start = 90, extent = 180, fill = button_background, outline = button_background)
-                    arc2 = self.create_arc(x + 75, y, x + 135, y + 60, start = -90, extent = 180, fill = button_background, outline = button_background)
-                    rect = self.create_rectangle(x + 30, y, x + 107, y + 60.5, fill = button_background, width = 0)
+                if button_text != "":
+                    if button_text == 0:
+                        arc1 = self.create_arc(x, y, x + 60, y + 60, start = 90, extent = 180, fill = button_background, outline = button_background)
+                        arc2 = self.create_arc(x + 75, y, x + 135, y + 60, start = -90, extent = 180, fill = button_background, outline = button_background)
+                        rect = self.create_rectangle(x + 30, y, x + 107, y + 60.5, fill = button_background, width = 0)
                     
-                    self.addtag_withtag("zero_button", arc1)
-                    self.addtag_withtag("zero_button", arc2)
-                    self.addtag_withtag("zero_button", rect)
-                    
-                    button = "zero_button"
+                        button = "zero_button"
+                        self.addtag_withtag(button, arc1)
+                        self.addtag_withtag(button, arc2)
+                        self.addtag_withtag(button, rect)
+                    else:
+                        button = self.create_oval(x, y, x + 60, y + 60, fill = button_background, width = 0)                    
                     
                 text_color = "black" if button_background == "#D3D3D3" else "white"
                 keyboard_text = self.create_text(x + 30, y + 30, text = button_text, fill = text_color, font = ("Arial", 20))
@@ -47,6 +49,9 @@ class KeyPad(tk.Canvas):
                 button_text = 0 if button_text == "" else button_text
                 self.tag_bind(button, "<Button-1>", lambda event, text = button_text: self.keyPressed(text))
                 self.tag_bind(keyboard_text, "<Button-1>", lambda event, text = button_text: self.keyPressed(text))
+                
+                self.buttons[button_text] = button
+                self.buttons[f"text_{button_text}"] = keyboard_text
                 
                           
     def hoverColorChange(self, item, button, color):
@@ -68,20 +73,37 @@ class KeyPad(tk.Canvas):
         if text == "AC": 
             #calculationScreen.configure(text = 0, font = ("Arial", 40))
             self.calculationScreen.clearAll()
-        elif text == "+/-": 
-            #calculationScreen["text"] = -int(calculationScreen.cget("text"))
-            self.calculationScreen.reverseSign()
-        elif text == "=":
-            self.calculationScreen.equate()
+            self.setButtonText("AC")
+            self.numberPressed = False
         else:
-            if self.calculationScreen.getHasEquated():
-                self.calculationScreen.resetHasEquated()
-                
+            if text == "C":
+                self.calculationScreen.clearAll()
+                self.setButtonText("AC")
+                self.numberPressed = False
+            if text == "+/-": 
+                #calculationScreen["text"] = -int(calculationScreen.cget("text"))
+                self.calculationScreen.reverseSign()
+            elif text == "=":
+                self.calculationScreen.equate()
+                self.numberPressed = False
+            else:  
                 if text not in self.side_operators and text != "%":
-                    self.calculationScreen.clearAll()
+                    self.numberPressed = True
                     
-            self.calculationScreen.addToEquation(str(text))
-            
+                    if self.calculationScreen.getHasEquated(): 
+                        self.calculationScreen.resetHasEquated()
+                    if text == "%":
+                        self.calculationScreen.clearAll()
+                        
+                self.calculationScreen.addToEquation(str(text))
+                if self.numberPressed:
+                    self.setButtonText("C")
+                
         if self.calculationScreen.winfo_reqwidth() > 325:
             #calculationScreen["font"] = ("Arial", int(calculationScreen.cget("font")[-2:]) - 3)
             self.calculationScreen.reduceFont()
+            
+    def setButtonText(self, text):
+        # Change button text from "AC" to "C" or Vice versa
+        if "AC" in self.buttons:
+            self.itemconfigure(self.buttons["text_AC"], text = text)

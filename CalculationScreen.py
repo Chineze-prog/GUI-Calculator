@@ -32,14 +32,18 @@ class CalculatorScreen(tk.Message):
                 self.hasEquated = True
                 # find the last number in the equation
                 i = len(equation) - 1
+                sig_dig = 0
+                
                 while i >= 0 and (equation[i].isdigit() or equation[i] == "."):
                     i -= 1
+                    if  equation[i] != ".":
+                        sig_dig += 1
+                    
                 lastNumber = float(equation[i+1:])
-                percentage = lastNumber * 0.01
-                if percentage < 0.01: # Show at least 3 significant digits
-                    self["text"] = f"{equation[:i+1]}{percentage:.3g}"
-                else: # Show 3 digits after decimal
-                    self["text"] = f"{equation[:i+1]}{percentage:.3f}"
+                
+                percentage = "{:.{}g}".format(lastNumber * 0.01, sig_dig)
+                self["text"] = f"{equation[:i+1]}{percentage}"
+                
             elif text in operators and equation[-1:] in operators:
                 self["text"] = f"{equation[:-1]}{text}"
             else:
@@ -54,10 +58,6 @@ class CalculatorScreen(tk.Message):
     def reduceFont(self):
         self["font"] = ("Arial", int(self.cget("font")[-2:]) - 6)
        
-    def clearPrev(self): 
-        equation = self.cget("text")
-        self["text"] = f"{equation[:-1]}"
-        
     def clearAll(self):
         self.configure(text = 0, font = ("Arial", 40))
         
