@@ -3,12 +3,12 @@ import tkinter as tk
 class KeyPad(tk.Canvas):
     def __init__(self, root, calculationScreen):
         super().__init__(master = root, background = root.cget("background"), highlightthickness = 0, height = 380)  
-        self.calculationScreen = calculationScreen
-        self.numberPressed = False
+        
         self.buttons = {}
+        self.calculationScreen = calculationScreen
+        self.side_operators = ("÷", "×", "-", "+", "=")
         
         upper_operators = ("AC", "+/-", "%")
-        self.side_operators = ("÷", "×", "-", "+", "=")
         text = (7, 8, 9, 4, 5, 6, 1, 2, 3, 0, "", ".")
         
         for row in range(5):
@@ -26,7 +26,6 @@ class KeyPad(tk.Canvas):
                     button_background = "#505050"
                     button_text = text[(row - 1) * 3 + column]
                 
-                
                 if button_text != "":
                     if button_text == 0:
                         arc1 = self.create_arc(x, y, x + 60, y + 60, start = 90, extent = 180, fill = button_background, outline = button_background)
@@ -34,6 +33,7 @@ class KeyPad(tk.Canvas):
                         rect = self.create_rectangle(x + 30, y, x + 107, y + 60.5, fill = button_background, width = 0)
                     
                         button = "zero_button"
+                        
                         self.addtag_withtag(button, arc1)
                         self.addtag_withtag(button, arc2)
                         self.addtag_withtag(button, rect)
@@ -47,6 +47,7 @@ class KeyPad(tk.Canvas):
                 self.hoverColorChange(item = keyboard_text, button = button, color = button_background)
                 
                 button_text = 0 if button_text == "" else button_text
+                
                 self.tag_bind(button, "<Button-1>", lambda event, text = button_text: self.keyPressed(text))
                 self.tag_bind(keyboard_text, "<Button-1>", lambda event, text = button_text: self.keyPressed(text))
                 
@@ -69,38 +70,29 @@ class KeyPad(tk.Canvas):
         
         
     def keyPressed(self, text):
-        # if ac the clear all, if c then go back one step
         if text == "AC": 
-            #calculationScreen.configure(text = 0, font = ("Arial", 40))
-            self.calculationScreen.clearAll()
             self.setButtonText("AC")
-            self.numberPressed = False
+            self.calculationScreen.clearAll()
         else:
             if text == "C":
-                self.calculationScreen.clearAll()
                 self.setButtonText("AC")
-                self.numberPressed = False
-            if text == "+/-": 
-                #calculationScreen["text"] = -int(calculationScreen.cget("text"))
+                self.calculationScreen.clearAll()
+            elif text == "+/-": 
                 self.calculationScreen.reverseSign()
             elif text == "=":
                 self.calculationScreen.equate()
-                self.numberPressed = False
             else:  
                 if text not in self.side_operators and text != "%":
-                    self.numberPressed = True
-                    
                     if self.calculationScreen.getHasEquated(): 
                         self.calculationScreen.resetHasEquated()
-                    if text == "%":
+                    elif text == "%":
                         self.calculationScreen.clearAll()
-                        
-                self.calculationScreen.addToEquation(str(text))
-                if self.numberPressed:
+                
                     self.setButtonText("C")
+                    
+                self.calculationScreen.addToEquation(str(text))
                 
         if self.calculationScreen.winfo_reqwidth() > 325:
-            #calculationScreen["font"] = ("Arial", int(calculationScreen.cget("font")[-2:]) - 3)
             self.calculationScreen.reduceFont()
             
     def setButtonText(self, text):
