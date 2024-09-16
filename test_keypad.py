@@ -1,10 +1,8 @@
 import unittest 
 import tkinter as tk
-import unittest.mock
+from unittest.mock import patch
 from Calculator.KeyPad import KeyPad
 from Calculator.CalculationScreen import CalculatorScreen
-
-
 
 '''
 Tests that the correct m,ethods are invoked when buttons are presses, 
@@ -23,14 +21,18 @@ class KeyPadTest(unittest.TestCase):
         self.root.destroy()
         
     # Test the pressing of a button and ensure that the correct method is called on the CalculatORScreen
-    @unittest.mock.patch.object(CalculatorScreen, 'addToEquation') # mock the addToEquation method
+    @patch.object(CalculatorScreen, 'addToEquation') # mock the addToEquation method
     def test_number_pressed(self, mock_add):
         self.keypad.keyPressed(5) # simulate pressing the "5" button
         mock_add.assert_called_with("5") # ensure that addToEquation was called with "1"
     
-    def test_clear_button(self):
-        pass
+    # testing that the "AC" button is pressed and the clearAll method is called
+    @patch.object(CalculatorScreen, 'clearAll') # mock the addToEquation method
+    def test_clear_button(self, mock_clear):
+        self.keypad.keyPressed("AC")
+        mock_clear.assert_called()
     
-    if __name__ == "__main__":
+
+if __name__ == "__main__":
         unittest.main() # run the tests
     

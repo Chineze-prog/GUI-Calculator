@@ -17,10 +17,16 @@ class CalculatorScreenTest(unittest.TestCase):
     def tearDown(self):
         self.root.destroy()
         
-    # testing that 
-    
+    # testing that the equation is evaluated correctly
     def test_equate(self):
-        pass
+        # simulating entering "5+7" and pressing the equals button
+        self.calculator_screen.addToEquation("5")
+        self.calculator_screen.addToEquation("+")
+        self.calculator_screen.addToEquation("7")
+        self.calculator_screen.equate()
+        
+        #check if the answer in "8"
+        self.assertEqual(self.calculator_screen.cget("text"), "12")
     
     def test_add_to_equation(self):
         pass
@@ -28,11 +34,18 @@ class CalculatorScreenTest(unittest.TestCase):
     def test_reverse_sign(self):
         pass
     
+    # tests that the screen is cleared correctly
     def test_clear_all(self):
-        pass
+        # simulating entering "269" and pressing the clear button
+        self.calculator_screen.addToEquation("269")
+        self.calculator_screen.clearAll()
+
+        #check if the screen shows "0"
+        self.assertEqual(self.calculator_screen.cget("text"), "0")
+    
     
     def test_percentage_conversion(self):
         pass
     
-    if __name__ == "__main__":
-        unittest.main() # run the tests
+if __name__ == "__main__":
+    unittest.main() # run the tests
